@@ -49,30 +49,3 @@ if __name__ == '__main__':
     print("Started Program")
     create_new_copy('./data/Recalls_Data_Original.csv', filepath)
     preprocess_csv(filepath)
-
-
-''' 
-
-all_columns = ['Report Received Date', 'NHTSA ID', 'Recall Link', 'Manufacturer', 'Subject', 'Component', 'Mfr Campaign Number',
-            'Recall Type', 'Potentially Affected', 'Recall Description', 'Consequence Summary', 'Corrective Action',
-            'Park Outside Advisory ', 'Do Not Drive Advisory', 'Completion Rate % (Blank - Not Reported)']
-
-[
-'Report Received Date', 
-'NHTSA ID', 
-'Recall Link', 
-'Manufacturer', 
-'Subject', 
-'Component', 
-'Mfr Campaign Number',
-'Recall Type', 
-'Potentially Affected', 
-'Recall Description', 
-'Consequence Summary', 
-'Corrective Action',
-'Park Outside Advisory', 
-'Do Not Drive Advisory', 
-'Completion Rate % (Blank - Not Reported)'
-]
-
-'''

@@ -1,0 +1,22 @@
+
+all_columns = ['Report Received Date', 'NHTSA ID', 'Recall Link', 'Manufacturer', 'Subject', 'Component', 'Mfr Campaign Number',
+            'Recall Type', 'Potentially Affected', 'Recall Description', 'Consequence Summary', 'Corrective Action',
+            'Park Outside Advisory ', 'Do Not Drive Advisory', 'Completion Rate % (Blank - Not Reported)']
+
+[
+'Report Received Date',
+'NHTSA ID',
+'Recall Link',
+'Manufacturer',
+'Subject',
+'Component',
+'Mfr Campaign Number',
+'Recall Type',
+'Potentially Affected',
+'Recall Description',
+'Consequence Summary',
+'Corrective Action',
+'Park Outside Advisory',
+'Do Not Drive Advisory',
+'Completion Rate % (Blank - Not Reported)'
+]
