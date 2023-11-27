@@ -8,15 +8,15 @@ if __name__ == '__main__':
     print("Started Program")
     # copy the original dataset and then preprocess the copy
     create_new_copy('./data/Recalls_Data_Original.csv', dataset_path)
-    preprocess_csv(dataset_path)
-    # at this point, the copied dataset at the specified path is the dataset to work on
 
-    # split data into train and test data
-    x_train, x_test, y_train, y_test = split_data(dataset_path)
+    # preprocess the dataset
+    x_train, x_test, y_train, y_test = preprocess_csv(dataset_path)
 
     print("Training Model")
     n = 5
     knn_model = KNeighborsClassifier(n)
     knn_model.fit(x_train, y_train)
+
+    print("Testing Model")
     y_pred = knn_model.predict(x_test)
     print("Accuracy: " + str(metrics.accuracy_score(y_test, y_pred)))
