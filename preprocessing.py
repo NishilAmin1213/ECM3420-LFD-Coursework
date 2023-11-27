@@ -1,5 +1,6 @@
 import pandas as pd
 from shutil import copy
+from sklearn.model_selection import train_test_split
 
 
 def create_new_copy(src_path, destination_path):
@@ -32,6 +33,13 @@ def preprocess_csv(filepath):
     print(filepath + " has been preprocessed")
 
 
+def split_data(filepath):
+    print("Splitting into Training and Testing data")
+    dataset = pd.read_csv(filepath)
+    training_data, testing_data = train_test_split(dataset, test_size=0.2)
+    return training_data, testing_data
+
+
 def get_unique(header, filepath):
     print("Getting Unique Values for " + header)
     src_path = filepath
@@ -39,8 +47,6 @@ def get_unique(header, filepath):
     # use pandas read_csv function to read the 'Recalls_Data.csv' file into a dataframe
     data = pd.read_csv(src_path)
 
-    # get number of unique entries
-    unique = data[header].unique()
+    # get number of unique entries and return them
+    return data[header].unique()
 
-    # return unique entries
-    return unique
