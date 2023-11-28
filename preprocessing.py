@@ -2,6 +2,8 @@ import pandas as pd
 from shutil import copy
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from imblearn.under_sampling import RandomUnderSampler
+
 
 
 def create_new_copy(src_path, destination_path):
@@ -43,6 +45,9 @@ def split_data(x_dataset):
     # remove the 'Do Not Drive Advisory' column from x_dataset and store it in y_dataset
     x_dataset, y_dataset = split_result_column(x_dataset, 'Do Not Drive Advisory')
 
+    #rus = RandomUnderSampler(random_state=0, replacement=True)
+    #x_dataset, y_dataset = rus.fit_resample(x_dataset, y_dataset)
+
     # use train test split to split the dataframes  into two
     x_train, x_test, y_train, y_test = train_test_split(x_dataset, y_dataset, test_size=0.2)
     return x_train, x_test, y_train, y_test
@@ -76,6 +81,9 @@ def preprocess_csv(filepath):
 
     # save the dataframe as a CSV and overwrite the original file
     dataset.to_csv(path_or_buf=filepath, index=False)
+
+    # DEBUGGING
+    print(dataset['Do Not Drive Advisory'].value_counts())
 
     # encode dataframe and save the encoded values to a csv file
     dataset = encode_data(dataset)
