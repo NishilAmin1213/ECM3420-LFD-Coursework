@@ -21,7 +21,7 @@ if __name__ == '__main__':
     y_pred = knn_model.predict(x_test)
     print("Accuracy: " + str(metrics.accuracy_score(y_test, y_pred)))
 
-    print("Training Random Forest Classifier")
+    print("\n\nTraining Random Forest Classifier")
     rf_model = RandomForestClassifier(max_depth=1, random_state=0)
     rf_model.fit(x_train, y_train)
     print("Testing Random Forest Classifier")

@@ -48,7 +48,7 @@ def split_data(x_dataset):
     return x_train, x_test, y_train, y_test
 
 
-def clean_dataset(dataset, filepath):
+def clean_dataset(dataset):
     # define columns to be removed from the dataframe
     columns_to_remove = ['NHTSA ID', 'Recall Link', 'Mfr Campaign Number', 'Recall Description', 'Consequence Summary',
                          'Corrective Action', 'Completion Rate % (Blank - Not Reported)']
@@ -59,14 +59,11 @@ def clean_dataset(dataset, filepath):
     # axis specifies to remove columns, not rows
     dataset.drop(columns=columns_to_remove, inplace=True, axis=1)
 
-    # remove any rows where 'Recall Type' is not vehicle - COMMENTED THIS OUT FOR NOW
-    # data = data.drop(data[data['Recall Type'] != 'Vehicle'].index)
+    # remove any rows where 'Recall Type' is not vehicle - COMMENTED THIS OUT FOR NOW - THIS IS NOT WORKING
+    dataset.drop(dataset[dataset['Recall Type'] != 'Vehicle'].index, axis=0, inplace=True)
 
     # remove any rows which contains NaN or no value
     dataset.dropna(axis=0, inplace=True)
-
-    # save the dataframe as a CSV and overwrite the original file
-    dataset.to_csv(path_or_buf=filepath, index=False)
 
 
 def preprocess_csv(filepath):
@@ -75,7 +72,10 @@ def preprocess_csv(filepath):
     dataset = pd.read_csv(filepath)
 
     # clean data by removing unwanted rows and columns
-    clean_dataset(dataset, filepath)
+    clean_dataset(dataset)
+
+    # save the dataframe as a CSV and overwrite the original file
+    dataset.to_csv(path_or_buf=filepath, index=False)
 
     # encode dataframe and save the encoded values to a csv file
     dataset = encode_data(dataset)
