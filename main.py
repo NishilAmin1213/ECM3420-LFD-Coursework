@@ -5,6 +5,9 @@ from sklearn import metrics
 
 def print_stats(y_test, y_pred):
     print("Accuracy: " + str(metrics.accuracy_score(y_test, y_pred)))
+    print("Precision: " + str(metrics.precision_score(y_test, y_pred)))
+    print("Recall: " + str(metrics.recall_score(y_test, y_pred)))
+    print("F1-Score: " + str(metrics.f1_score(y_test, y_pred)))
     print("Confusion Matrix:\n" + str(metrics.confusion_matrix(y_test, y_pred)))
 
 if __name__ == '__main__':
@@ -17,19 +20,21 @@ if __name__ == '__main__':
     # preprocess the dataset
     x_train, x_test, y_train, y_test = preprocess_csv(dataset_path)
 
-    print("Training KNN Model")
-    n = 5
+    print("\n\nTraining & Testing KNN Model")
+    # Training Model
+    n = 10
     knn_model = KNeighborsClassifier(n)
     knn_model.fit(x_train, y_train)
-    print("Testing KNN Model")
+    # Testing Model
     y_pred = knn_model.predict(x_test)
     print_stats(y_test, y_pred)
 
 
-    print("\n\nTraining Random Forest Classifier")
+    print("\n\nTraining & Testing Random Forest Classifier")
+    # Training Model
     rf_model = RandomForestClassifier(max_depth=1, random_state=0)
     rf_model.fit(x_train, y_train)
-    print("Testing Random Forest Classifier")
+    # Testing Model
     y_pred = rf_model.predict(x_test)
     print_stats(y_test, y_pred)
 
