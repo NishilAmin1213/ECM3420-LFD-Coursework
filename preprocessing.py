@@ -1,11 +1,9 @@
 import pandas as pd
 from shutil import copy
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-
-from imblearn.under_sampling import *
 from imblearn.over_sampling import *
-from imblearn.combine import *
+from imblearn.under_sampling import *
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
 
 def create_new_copy(src_path, destination_path):
@@ -40,28 +38,31 @@ def split_result_column(x_dataset, header):
     return x_dataset, y_dataset
 
 
-def resample_data(x_dataset, y_dataset):
+def resample_data(x_dataset, y_dataset, option):
     print("Rescaling Data ....")
-    rus = RandomUnderSampler(replacement=True, sampling_strategy='not minority')
-    ros = RandomUnderSampler(replacement=True, sampling_strategy='not minority')
-    nm = NearMiss(sampling_strategy=1)
-    cc = ClusterCentroids(random_state=40)
-    cnn = CondensedNearestNeighbour(random_state=40, sampling_strategy="not minority")
-    enn = EditedNearestNeighbours(sampling_strategy="not minority")
-    aknn = AllKNN()
+    samplers = []
 
-    over = RandomOverSampler(sampling_strategy=0.1)
-    under = RandomUnderSampler(sampling_strategy=0.5)
+    if option == 'rus(not minority)':
+        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='not minority'))
+    elif option == 'nm':
+        samplers.append(NearMiss(sampling_strategy=1))
+    elif option == 'cc':
+        samplers.append(ClusterCentroids(random_state=40))
+    elif option == 'rus(all)':
+        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='all'))
+    elif option == 'rus(0.5)':
+        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy=0.5))
+    elif option == 'ros(0.1)rus(0.5)':
+        samplers.append(RandomOverSampler(sampling_strategy=0.1))
+        samplers.append(RandomUnderSampler(sampling_strategy=0.5))
 
-    #x_dataset, y_dataset = over.fit_resample(x_dataset, y_dataset)
-    #x_dataset, y_dataset = under.fit_resample(x_dataset, y_dataset)
-
-    x_dataset, y_dataset = aknn.fit_resample(x_dataset, y_dataset)
+    for sampler in samplers:
+        x_dataset, y_dataset = sampler.fit_resample(x_dataset, y_dataset)
 
     return x_dataset, y_dataset
 
 
-def split_data(x_dataset):
+def split_data(x_dataset, option):
     print("Splitting into Training and Testing data ....")
 
     # remove the 'Do Not Drive Advisory' column from x_dataset and store it in y_dataset
@@ -71,7 +72,7 @@ def split_data(x_dataset):
     print(y_dataset['Do Not Drive Advisory'].value_counts())
 
     # rescale dataset to remove the imbalance between 1 and 0 values in 'Do Not Drive'
-    x_dataset, y_dataset = resample_data(x_dataset, y_dataset)
+    x_dataset, y_dataset = resample_data(x_dataset, y_dataset, option)
 
     print("\nFinal Value Counts")
     print(y_dataset['Do Not Drive Advisory'].value_counts())
@@ -103,7 +104,7 @@ def clean_dataset(dataset):
     dataset.dropna(axis=0, inplace=True)
 
 
-def preprocess_csv(filepath):
+def preprocess_csv(filepath, option):
     print("Preprocessing " + filepath)
 
     # use pandas read_csv function to read the 'Recalls_Data.csv' file into a dataframe
@@ -119,8 +120,8 @@ def preprocess_csv(filepath):
     dataset = encode_data(dataset)
     dataset.to_csv(path_or_buf='./data/encoded_data.csv', index=False)
 
-    # split data into train and test sets
-    x_train, x_test, y_train, y_test = split_data(dataset)
+    # split data into train and test sets and rescale the data
+    x_train, x_test, y_train, y_test = split_data(dataset, option)
 
     # return split dataset
     return x_train, x_test, y_train, y_test
