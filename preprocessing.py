@@ -76,27 +76,17 @@ def clean_dataset(dataset):
     dataset.dropna(axis=0, inplace=True)
 
 
-def split_data(x_dataset, option):
+def split_rescale_data(x_dataset, option):
     print("Splitting into Training and Testing data ....")
 
     # remove the 'Do Not Drive Advisory' column from x_dataset and store it in y_dataset
     x_dataset, y_dataset = split_result_column(x_dataset, 'Do Not Drive Advisory')
 
-    print("\nInitial Value Counts")
-    print(y_dataset['Do Not Drive Advisory'].value_counts())
-
     # rescale dataset to remove the imbalance between 1 and 0 values in 'Do Not Drive'
     x_dataset, y_dataset = resample_data(x_dataset, y_dataset, option)
 
-    print("\nFinal Value Counts")
-    print(y_dataset['Do Not Drive Advisory'].value_counts())
+    return x_dataset, y_dataset
 
-    # use train test split to split the dataframes into two
-    x_train, x_test, y_train, y_test = train_test_split(x_dataset, y_dataset, test_size=0.2)
-
-    print("\nTest Value Counts")
-    print(y_test['Do Not Drive Advisory'].value_counts())
-    return x_train, x_test, y_train, y_test
 
 
 def preprocess_csv(filepath, option):
@@ -115,10 +105,13 @@ def preprocess_csv(filepath, option):
     dataset = encode_data(dataset)
     dataset.to_csv(path_or_buf='./data/encoded_data.csv', index=False)
 
-    # split data into train and test sets and rescale the data
-    x_train, x_test, y_train, y_test = split_data(dataset, option)
+    # split data into x and y datasets (column to predict separately)
+    x_dataset, y_dataset = split_rescale_data(dataset, option)
 
-    # return split dataset
+    # split the datasets into training and testing data
+    x_train, x_test, y_train, y_test = train_test_split(x_dataset, y_dataset, test_size=0.2)
+
+    # return the split and preprocessed data
     return x_train, x_test, y_train, y_test
 
 
