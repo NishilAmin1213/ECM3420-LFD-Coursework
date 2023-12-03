@@ -14,14 +14,9 @@ def create_new_copy(src_path, destination_path):
 def encode_data(dataframe):
     print("Encoding Data ....")
     le = LabelEncoder()
-    dataframe['Manufacturer'] = le.fit_transform(dataframe['Manufacturer'])
-    dataframe['Recall Type'] = le.fit_transform(dataframe['Recall Type'])
-    dataframe['Component'] = le.fit_transform(dataframe['Component'])
-    dataframe['Park Outside Advisory '] = le.fit_transform(dataframe['Park Outside Advisory '])
-    dataframe['Do Not Drive Advisory'] = le.fit_transform(dataframe['Do Not Drive Advisory'])
-
-    dataframe['Report Received Date'] = le.fit_transform(dataframe['Report Received Date'])
-    dataframe['Subject'] = le.fit_transform(dataframe['Subject'])
+    headers = ['Manufacturer', 'Recall Type', 'Component', 'Park Outside Advisory ', 'Do Not Drive Advisory', 'Report Received Date', 'Subject']
+    for column in headers:
+        dataframe[column] = le.fit_transform(dataframe[column])
 
     return dataframe
 
