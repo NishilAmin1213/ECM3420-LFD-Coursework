@@ -37,9 +37,7 @@ def resample_data(x_dataset, y_dataset, option):
     print("Rescaling Data ....")
     samplers = []
 
-    if option == 'rus(not minority)':
-        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='not minority'))
-    elif option == 'nm':
+    if option == 'nm':
         samplers.append(NearMiss(sampling_strategy=1))
     elif option == 'cc':
         samplers.append(ClusterCentroids(random_state=40))
@@ -47,6 +45,8 @@ def resample_data(x_dataset, y_dataset, option):
         samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='all'))
     elif option == 'rus(0.5)':
         samplers.append(RandomUnderSampler(replacement=True, sampling_strategy=0.5))
+    elif option == 'rus(not minority)':
+        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='not minority'))
     elif option == 'ros(0.1)rus(0.5)':
         samplers.append(RandomOverSampler(sampling_strategy=0.1))
         samplers.append(RandomUnderSampler(sampling_strategy=0.5))
@@ -55,6 +55,25 @@ def resample_data(x_dataset, y_dataset, option):
         x_dataset, y_dataset = sampler.fit_resample(x_dataset, y_dataset)
 
     return x_dataset, y_dataset
+
+
+def clean_dataset(dataset):
+    print("Cleaning Dataset ....")
+    # define columns to be removed from the dataframe
+    columns_to_remove = ['NHTSA ID', 'Recall Link', 'Mfr Campaign Number', 'Recall Description', 'Consequence Summary',
+                         'Corrective Action', 'Completion Rate % (Blank - Not Reported)']
+
+    # remove columns that are no longer needed
+    # labels is the array of headers for the colums to remove
+    # inplace works on the dataframe itself as opposed to returning a copy
+    # axis specifies to remove columns, not rows
+    dataset.drop(columns=columns_to_remove, inplace=True, axis=1)
+
+    # remove any rows where 'Recall Type' is not vehicle - COMMENTED THIS OUT FOR NOW - THIS IS NOT WORKING
+    dataset.drop(dataset[dataset['Recall Type'] != 'Vehicle'].index, axis=0, inplace=True)
+
+    # remove any rows which contains NaN or no value
+    dataset.dropna(axis=0, inplace=True)
 
 
 def split_data(x_dataset, option):
@@ -80,25 +99,6 @@ def split_data(x_dataset, option):
     return x_train, x_test, y_train, y_test
 
 
-def clean_dataset(dataset):
-    print("Cleaning Dataset ....")
-    # define columns to be removed from the dataframe
-    columns_to_remove = ['NHTSA ID', 'Recall Link', 'Mfr Campaign Number', 'Recall Description', 'Consequence Summary',
-                         'Corrective Action', 'Completion Rate % (Blank - Not Reported)']
-
-    # remove columns that are no longer needed
-    # labels is the array of headers for the colums to remove
-    # inplace works on the dataframe itself as opposed to returning a copy
-    # axis specifies to remove columns, not rows
-    dataset.drop(columns=columns_to_remove, inplace=True, axis=1)
-
-    # remove any rows where 'Recall Type' is not vehicle - COMMENTED THIS OUT FOR NOW - THIS IS NOT WORKING
-    dataset.drop(dataset[dataset['Recall Type'] != 'Vehicle'].index, axis=0, inplace=True)
-
-    # remove any rows which contains NaN or no value
-    dataset.dropna(axis=0, inplace=True)
-
-
 def preprocess_csv(filepath, option):
     print("Preprocessing " + filepath)
 
@@ -108,10 +108,10 @@ def preprocess_csv(filepath, option):
     # clean data by removing unwanted rows and columns
     clean_dataset(dataset)
 
-    # save the dataframe as a CSV and overwrite the original file
+    # save the dataframe as a CSV and overwrite the original file (this produces a readable csv)
     dataset.to_csv(path_or_buf=filepath, index=False)
 
-    # encode dataframe and save the encoded values to a csv file
+    # encode dataframe and save the encoded values to a csv file (this produces a csv of encoded data)
     dataset = encode_data(dataset)
     dataset.to_csv(path_or_buf='./data/encoded_data.csv', index=False)
 
