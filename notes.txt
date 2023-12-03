@@ -20,3 +20,14 @@ all_columns = ['Report Received Date', 'NHTSA ID', 'Recall Link', 'Manufacturer'
 'Do Not Drive Advisory',
 'Completion Rate % (Blank - Not Reported)'
 ]
+
+
+'''
+    elif option == 'rus(all)':
+        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='all'))
+    elif option == 'rus(0.5)':
+        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy=0.5))
+
+    train_test_knn(dataset_path, 'rus(all)', 5)
+    train_test_knn(dataset_path, 'rus(0.5)', 5)
+'''

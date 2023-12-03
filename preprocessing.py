@@ -1,5 +1,6 @@
 import pandas as pd
 from shutil import copy
+from imblearn.combine import *
 from imblearn.over_sampling import *
 from imblearn.under_sampling import *
 from sklearn.preprocessing import LabelEncoder
@@ -40,16 +41,16 @@ def resample_data(x_dataset, y_dataset, option):
     if option == 'nm':
         samplers.append(NearMiss(sampling_strategy=1))
     elif option == 'cc':
-        samplers.append(ClusterCentroids(random_state=40))
-    elif option == 'rus(all)':
-        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='all'))
-    elif option == 'rus(0.5)':
-        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy=0.5))
+        samplers.append(ClusterCentroids())
     elif option == 'rus(not minority)':
-        samplers.append(RandomUnderSampler(replacement=True, sampling_strategy='not minority'))
+        samplers.append(RandomUnderSampler(sampling_strategy='not minority'))
     elif option == 'ros(0.1)rus(0.5)':
         samplers.append(RandomOverSampler(sampling_strategy=0.1))
         samplers.append(RandomUnderSampler(sampling_strategy=0.5))
+    elif option == 'smoteenn':
+        samplers.append(SMOTEENN())
+    else:
+        pass
 
     for sampler in samplers:
         x_dataset, y_dataset = sampler.fit_resample(x_dataset, y_dataset)
@@ -86,7 +87,6 @@ def split_rescale_data(x_dataset, option):
     x_dataset, y_dataset = resample_data(x_dataset, y_dataset, option)
 
     return x_dataset, y_dataset
-
 
 
 def preprocess_csv(filepath, option):

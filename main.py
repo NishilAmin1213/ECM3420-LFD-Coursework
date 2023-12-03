@@ -1,5 +1,10 @@
+import os
 import csv
+
+from sklearn.metrics import ConfusionMatrixDisplay
+
 from preprocessing import *
+from metrics_graph import *
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_wine
@@ -8,13 +13,25 @@ from sklearn.neighbors import KNeighborsClassifier
 
 def save_to_csv(rescale, algorithm, x_train, x_test, y_train, y_test, y_pred):
 
-    with open('./data/resultsKNN1.csv', 'a', newline='') as file:
+    with open('./data/resultsKNN2.csv', 'a', newline='') as file:
         writer = csv.writer(file)
+
+        file_size = os.path.getsize('./data/resultsKNN2.csv')
+        if file_size == 0:
+            header = ['Rescale Algorithm', 'ML Algorithm', 'Accuracy', 'Precision', 'Recall', 'F1', 'No', 'Yes', 'Confusion Matrix']
+            writer.writerow(header)
+
+        rescale_map = {'nm': 'Near Miss',
+                       'cc': 'Cluster Centroids',
+                       'rus(not minority)': 'Random Under Sampler (Not Minority)',
+                       'ros(0.1)rus(0.5)': 'OverSampler(0.2) then UnderSampler(0.5)',
+                       'smoteenn': 'SMOTEENN',
+                       'none': 'None - Original Data'}
 
         count_no = y_train['Do Not Drive Advisory'].value_counts()[0] + y_test['Do Not Drive Advisory'].value_counts()[0]
         count_yes = y_train['Do Not Drive Advisory'].value_counts()[1] + y_test['Do Not Drive Advisory'].value_counts()[1]
 
-        row = [rescale,
+        row = [rescale_map[rescale],
                algorithm,
                metrics.accuracy_score(y_test, y_pred),
                metrics.precision_score(y_test, y_pred),
@@ -22,8 +39,7 @@ def save_to_csv(rescale, algorithm, x_train, x_test, y_train, y_test, y_pred):
                metrics.f1_score(y_test, y_pred),
                count_no,
                count_yes,
-               str(metrics.confusion_matrix(y_test, y_pred)).replace("\n", "")]
-
+               metrics.confusion_matrix(y_test, y_pred).tolist()]
         writer.writerow(row)
 
 
@@ -33,7 +49,8 @@ def print_stats(y_test, y_pred):
     print("Recall: " + str(metrics.recall_score(y_test, y_pred)))
     print("F1-Score: " + str(metrics.f1_score(y_test, y_pred)))
     print("Confusion Matrix:\n" + str(metrics.confusion_matrix(y_test, y_pred)))
-
+    print(type(metrics.confusion_matrix(y_test, y_pred)))
+    print(metrics.confusion_matrix(y_test, y_pred).shape)
 
 def train_test_knn(dataset_path, option, n):
     # copy the original dataset and then preprocess the copy
@@ -65,12 +82,16 @@ if __name__ == '__main__':
     dataset_path = "./data/Recalls_Data.csv"
     print("Started Program")
 
+    train_test_knn(dataset_path, 'none', 5)
     train_test_knn(dataset_path, 'nm', 5)
     train_test_knn(dataset_path, 'cc', 5)
-    train_test_knn(dataset_path, 'rus(all)', 5)
-    train_test_knn(dataset_path, 'rus(0.5)', 5)
     train_test_knn(dataset_path, 'rus(not minority)', 5)
     train_test_knn(dataset_path, 'ros(0.1)rus(0.5)', 5)
+    train_test_knn(dataset_path, 'smoteenn', 5)
 
     plt.legend()
     plt.show()
+
+    plot_metrics('./data/resultsKNN2.csv')
+    confusion_plot('./data/resultsKNN2.csv')
+
