@@ -1,10 +1,8 @@
-import matplotlib.pyplot as plt
+import ast
 import numpy as np
 import pandas as pd
-import ast
-
+import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
-
 
 def confusion_plot(csvfile='./data/resultsKNN1.csv'):
     print("Generating Confusion Matrices....")

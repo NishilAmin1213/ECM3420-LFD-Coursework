@@ -1,8 +1,5 @@
 import os
 import csv
-
-from sklearn.metrics import ConfusionMatrixDisplay
-
 from preprocessing import *
 from metrics_graph import *
 from sklearn import metrics
