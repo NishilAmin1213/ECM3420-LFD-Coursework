@@ -8,7 +8,6 @@ from imblearn.over_sampling import *
 from imblearn.combine import *
 
 
-
 def create_new_copy(src_path, destination_path):
     copy(src_path, destination_path)
     print("Created " + destination_path)
@@ -44,7 +43,12 @@ def split_result_column(x_dataset, header):
 def resample_data(x_dataset, y_dataset):
     print("Rescaling Data ....")
     rus = RandomUnderSampler(replacement=True, sampling_strategy='not minority')
+    ros = RandomUnderSampler(replacement=True, sampling_strategy='not minority')
     nm = NearMiss(sampling_strategy=1)
+    cc = ClusterCentroids(random_state=40)
+    cnn = CondensedNearestNeighbour(random_state=40, sampling_strategy="not minority")
+    enn = EditedNearestNeighbours(sampling_strategy="not minority")
+    aknn = AllKNN()
 
     over = RandomOverSampler(sampling_strategy=0.1)
     under = RandomUnderSampler(sampling_strategy=0.5)
@@ -52,7 +56,7 @@ def resample_data(x_dataset, y_dataset):
     #x_dataset, y_dataset = over.fit_resample(x_dataset, y_dataset)
     #x_dataset, y_dataset = under.fit_resample(x_dataset, y_dataset)
 
-    x_dataset, y_dataset = nm.fit_resample(x_dataset, y_dataset)
+    x_dataset, y_dataset = aknn.fit_resample(x_dataset, y_dataset)
 
     return x_dataset, y_dataset
 
@@ -74,6 +78,9 @@ def split_data(x_dataset):
 
     # use train test split to split the dataframes into two
     x_train, x_test, y_train, y_test = train_test_split(x_dataset, y_dataset, test_size=0.2)
+
+    print("\nTest Value Counts")
+    print(y_test['Do Not Drive Advisory'].value_counts())
     return x_train, x_test, y_train, y_test
 
 
