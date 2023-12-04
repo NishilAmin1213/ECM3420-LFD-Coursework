@@ -21,7 +21,7 @@ def save_to_csv(rescale, algorithm, x_train, x_test, y_train, y_test, y_pred):
         rescale_map = {'nm': 'Near Miss',
                        'cc': 'Cluster Centroids',
                        'rus(not minority)': 'Random Under Sampler (Not Minority)',
-                       'ros(0.1)rus(0.5)': 'OverSampler(0.2) then UnderSampler(0.5)',
+                       'ros(0.1)rus(0.5)': 'OverSampler(0.1) then UnderSampler(0.5)',
                        'smoteenn': 'SMOTEENN',
                        'none': 'None - Original Data'}
 
